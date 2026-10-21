@@ -12,12 +12,11 @@ from injector import Injector
 from config import Config
 
 injector = Injector()
-
+router = injector.get(Router)
+# 关闭WTF的CSRF保护
 conf = injector.get(Config)
 
-
-
-app = Http(__name__, config=conf, router=injector.get(Router))
+app = Http(__name__, config=conf, router=router)
 
 if __name__ == "__main__":
     app.run(debug=True)

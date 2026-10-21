@@ -25,7 +25,7 @@ class FailException(CustomException):
     """
     失败异常
     """
-    pass
+    code: HttpCode = HttpCode.FAIL
 
 class NotFoundException(CustomException):
     """
