@@ -8,4 +8,5 @@
 
 from .database_extension import db
 
-__all__ = ["db"]
+from .migrate_extersion import migrate
+__all__ = ["db", "migrate"]

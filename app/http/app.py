@@ -5,6 +5,7 @@
 @Author :   likai.com
 @File   :   app.py
 """
+from flask_migrate import Migrate
 from pkg.sqlalchemy import SQLAlchemy
 
 from internal.server import Http
@@ -18,8 +19,9 @@ router = injector.get(Router)
 # 关闭WTF的CSRF保护、加载配置
 conf = injector.get(Config)
 db = injector.get(SQLAlchemy)
+migrate = injector.get(Migrate)
 
-app = Http(__name__, config=conf, router=router, db=db)
+app = Http(__name__, config=conf, router=router, db=db, migrate=migrate)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -5,7 +5,10 @@
 @Author :   likai.com
 @File   :   http.py
 """
+import os
+
 from flask import Flask
+from flask_migrate import Migrate
 from internal.router import Router
 from config import Config
 from internal.exception import CustomException
@@ -18,7 +21,7 @@ from pkg.sqlalchemy import SQLAlchemy
 class Http(Flask):
 
     # 注册路由
-    def __init__(self, *args, config: Config, router: Router, db: SQLAlchemy, **kwargs):
+    def __init__(self, *args, config: Config, router: Router, db: SQLAlchemy, migrate: Migrate, **kwargs):
         super().__init__(*args, **kwargs)
         # 注册路由
         router.register_router(self)
@@ -31,6 +34,7 @@ class Http(Flask):
 
         # 注册数据库（必须先 init_app，再 create_all）
         db.init_app(self)
+        migrate.init_app(self, db, directory="internal/migrations")
         with self.app_context():
             _ = App()
             db.create_all()
