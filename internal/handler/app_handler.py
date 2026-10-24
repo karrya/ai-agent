@@ -5,18 +5,17 @@
 @Author :   likai.com
 @File   :   app_handler.py
 """
-import os
 from dataclasses import dataclass
-from platform import release
 
+import dotenv
 from flask import request
 from injector import inject
 from openai import OpenAI
-import dotenv
-from internal.schema.app_schema import CompletionReq
+
 from internal.exception import FailException
+from internal.schema.app_schema import CompletionReq
 from pkg.response import success_json, validation_error_json
-from pkg.sqlalchemy import SQLAlchemy
+from service import AppService
 
 # 加载 .env 中的 OPENAI_API_KEY / OPENAI_BASE_URL，OpenAI SDK 会自动读取
 dotenv.load_dotenv()
@@ -26,23 +25,19 @@ dotenv.load_dotenv()
 @inject
 @dataclass
 class AppHandler:
+    service: AppService
 
-    db: SQLAlchemy
-
-    # 相当于：建立了一个Controller的方法
     def ping(self):
         raise FailException("ping failed")
         # return {"ping": "pong"}
 
     def create_app(self):
-        with self.db.auto_commit():
-            app = self.db.session.create_app()
+        app = self.service.create_app()
         return success_json(f"应用已经创建成功，id为{app.id}")
-
 
     def get_app(self):
         id = request.args.get("id") or (request.get_json(silent=True) or {}).get("id")
-        app = self.db.session.get(id)
+        app = self.service.get(id)
         return success_json({
             "id": app.id,
             "account_id": app.account_id,
@@ -54,7 +49,7 @@ class AppHandler:
         })
 
     def get_app_id(self, id: str):
-        app = self.db.session.get(id)
+        app = self.service.get_app_id(id)
         return success_json({
             "id": app.id,
             "account_id": app.account_id,
@@ -66,12 +61,8 @@ class AppHandler:
         })
 
     def update_app(self, id: str):
-        with self.db.auto_commit():
-            app = self.db.session.get(id)
-            app.name = "哇哈哈"
-            self.db.session.commit()
-        return success_json(f"应用已经更新成功，id为{app.id}")
-
+        update_app = self.service.update_app(id)
+        return success_json(f"应用已经更新成功，id为{update_app.name}")
 
     def completion(self):
         # 1、获取请求体中的 query 字段
@@ -82,11 +73,9 @@ class AppHandler:
 
         query = request.json.get("query")
 
-
         # 2、调用 Anthropic API
         # Kimi for Coding 端点（api.kimi.com/coding）只支持 Anthropic 协议
         client = OpenAI()
-
 
         # 3、调用 Anthropic API
         response = client.chat.completions.create(

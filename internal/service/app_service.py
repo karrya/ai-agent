@@ -39,12 +39,18 @@ class AppService:
 
         return app
 
-    def get(self,id: str) -> App:
+    def get(self, id: str) -> App:
         app = self.db.session.query(App).filter(App.id == id).first()
         if not app:
             raise FailException("应用不存在")
         return app
 
+    def get_app_id(self, id: str):
+        app = self.db.session.get(App, id)
+        return app
 
-
-
+    def update_app(self, id: str):
+        with self.db.auto_commit():
+            app = self.db.session.get(App, id)
+            app.name = "哇哈哈"
+        return app
