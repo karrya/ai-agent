@@ -13,6 +13,7 @@ from openai import OpenAI
 import dotenv
 from internal.schema.app_schema import CompletionReq
 from internal.exception import FailException
+from pkg.response import success_json, validation_error_json
 
 # 加载 .env 中的 OPENAI_API_KEY / OPENAI_BASE_URL，OpenAI SDK 会自动读取
 dotenv.load_dotenv()
@@ -31,7 +32,7 @@ class AppHandler:
         req = CompletionReq()
 
         if not req.validate():
-            return req.errors
+            return validation_error_json(req.errors)
 
         query = request.json.get("query")
 
@@ -52,4 +53,4 @@ class AppHandler:
 
         content = response.choices[0].message.content
 
-        return  content
+        return success_json(content)
