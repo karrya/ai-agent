@@ -9,7 +9,7 @@ import uuid
 from dataclasses import dataclass
 
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from pkg.sqlalchemy import SQLAlchemy
 
 from injector import inject
 

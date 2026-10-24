@@ -12,7 +12,7 @@ from internal.exception import CustomException
 from model import App
 from pkg.http_code import HttpCode
 from pkg.response import Json, Response
-from flask_sqlalchemy import SQLAlchemy
+from pkg.sqlalchemy import SQLAlchemy
 
 
 class Http(Flask):

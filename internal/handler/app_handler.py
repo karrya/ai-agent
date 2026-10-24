@@ -16,7 +16,7 @@ import dotenv
 from internal.schema.app_schema import CompletionReq
 from internal.exception import FailException
 from pkg.response import success_json, validation_error_json
-from service import AppService
+from pkg.sqlalchemy import SQLAlchemy
 
 # 加载 .env 中的 OPENAI_API_KEY / OPENAI_BASE_URL，OpenAI SDK 会自动读取
 dotenv.load_dotenv()
@@ -27,7 +27,7 @@ dotenv.load_dotenv()
 @dataclass
 class AppHandler:
 
-    app_service: AppService
+    db: SQLAlchemy
 
     # 相当于：建立了一个Controller的方法
     def ping(self):
@@ -35,13 +35,14 @@ class AppHandler:
         # return {"ping": "pong"}
 
     def create_app(self):
-        app = self.app_service.create_app()
+        with self.db.auto_commit():
+            app = self.db.session.create_app()
         return success_json(f"应用已经创建成功，id为{app.id}")
 
 
     def get_app(self):
         id = request.args.get("id") or (request.get_json(silent=True) or {}).get("id")
-        app = self.app_service.get(id)
+        app = self.db.session.get(id)
         return success_json({
             "id": app.id,
             "account_id": app.account_id,
@@ -53,7 +54,7 @@ class AppHandler:
         })
 
     def get_app_id(self, id: str):
-        app = self.app_service.get(id)
+        app = self.db.session.get(id)
         return success_json({
             "id": app.id,
             "account_id": app.account_id,
@@ -65,9 +66,10 @@ class AppHandler:
         })
 
     def update_app(self, id: str):
-        app = self.app_service.get(id)
-        app.name = "哇哈哈"
-        self.app_service.db.session.commit()
+        with self.db.auto_commit():
+            app = self.db.session.get(id)
+            app.name = "哇哈哈"
+            self.db.session.commit()
         return success_json(f"应用已经更新成功，id为{app.id}")
 
 

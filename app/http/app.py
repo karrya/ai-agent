@@ -5,7 +5,7 @@
 @Author :   likai.com
 @File   :   app.py
 """
-from flask_sqlalchemy import SQLAlchemy
+from pkg.sqlalchemy import SQLAlchemy
 
 from internal.server import Http
 from internal.router import Router
