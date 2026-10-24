@@ -28,12 +28,12 @@ class Http(Flask):
 
         # 加载配置
         self.config.from_object(config)
+
+        # 注册数据库（必须先 init_app，再 create_all）
+        db.init_app(self)
         with self.app_context():
             _ = App()
             db.create_all()
-
-        # 注册数据库
-        db.init_app(self)
 
     def _handle_custom_exception(self, e: Exception):
         # 自定义异常处理，如果是自定义异常，则提取message和code

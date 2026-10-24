@@ -25,13 +25,13 @@ class AppService:
     def create_app(self) -> App:
         # 1、创建模型实体类
         app = App()
-        app.account_id = uuid.uuid4()
+        app.account_id = str(uuid.uuid4())
         app.name = "测试机器人"
         app.icon = ""
         app.description = "这是一个测试机器人"
 
         # 2、将实体类添加会话
-        self.db.session.add(App)
+        self.db.session.add(app)
 
         # 3、提交会话
         self.db.session.commit()

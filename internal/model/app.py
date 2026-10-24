@@ -9,7 +9,6 @@ from datetime import datetime
 import uuid
 from sqlalchemy import (
     Column,
-    UUID,
     DateTime,
     String,
     Text,
@@ -27,8 +26,8 @@ class App(db.Model):
         Index("idx_app_account_id", "account_id"),
     )
 
-    id = Column(UUID, default=uuid.uuid4, primary_key=True, nullable=False)
-    account_id = Column(UUID, default=uuid.uuid4, nullable=False)
+    id = Column(String(36), default=lambda: str(uuid.uuid4()), primary_key=True, nullable=False)
+    account_id = Column(String(36), default=lambda: str(uuid.uuid4()), nullable=False)
     name = Column(String(255), default="", nullable=False)
     icon = Column(String(255), default="", nullable=False)
     description = Column(Text, default="", nullable=False)
