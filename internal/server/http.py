@@ -9,6 +9,7 @@ from flask import Flask
 from internal.router import Router
 from config import Config
 from internal.exception import CustomException
+from model import App
 from pkg.http_code import HttpCode
 from pkg.response import Json, Response
 from flask_sqlalchemy import SQLAlchemy
@@ -27,6 +28,9 @@ class Http(Flask):
 
         # 加载配置
         self.config.from_object(config)
+        with self.app_context():
+            _ = App()
+            db.create_all()
 
         # 注册数据库
         db.init_app(self)

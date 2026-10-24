@@ -24,8 +24,8 @@ class Router:
         # 2、创建路由（相当于@RequestMapping）
         # 注意： view_func=app_handler.ping是与方法做绑定，如果是 view_func=app_handler.ping()，则会报错，是与方法返回的结果做绑定
         bp.add_url_rule("/ping", view_func=self.app_handler.ping, methods=["GET"])
-
         bp.add_url_rule("/app/completion", view_func=self.app_handler.completion, methods=["POST"])
+        bp.add_url_rule("/app/create", view_func=self.app_handler.create_app, methods=["POST"])
 
         # 3、注册蓝图
         flask.register_blueprint(bp)

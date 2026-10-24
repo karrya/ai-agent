@@ -6,26 +6,38 @@
 @File   :   app_handler.py
 """
 import os
+from dataclasses import dataclass
 from platform import release
 
 from flask import request
+from injector import inject
 from openai import OpenAI
 import dotenv
 from internal.schema.app_schema import CompletionReq
 from internal.exception import FailException
 from pkg.response import success_json, validation_error_json
+from service import AppService
 
 # 加载 .env 中的 OPENAI_API_KEY / OPENAI_BASE_URL，OpenAI SDK 会自动读取
 dotenv.load_dotenv()
 
 
 # 相当于：建立了一个Controller类
+@inject
+@dataclass
 class AppHandler:
+
+    app_service: AppService
 
     # 相当于：建立了一个Controller的方法
     def ping(self):
         raise FailException("ping failed")
         # return {"ping": "pong"}
+
+    def create_app(self):
+        app = self.app_service.create_app()
+        return success_json(f"应用已经创建成功，id为{app.id}")
+
 
     def completion(self):
         # 1、获取请求体中的 query 字段

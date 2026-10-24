@@ -24,7 +24,6 @@ app = Http(__name__, config=conf, router=router, db=db)
 if __name__ == "__main__":
     app.run(debug=True)
 
-
 # from flask import Flask
 # from injector import Injector
 # from internal.router import Router
