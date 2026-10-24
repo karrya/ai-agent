@@ -13,6 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from injector import inject
 
+from exception import FailException
 from model import App
 
 
@@ -37,5 +38,13 @@ class AppService:
         self.db.session.commit()
 
         return app
+
+    def get(self,id: str) -> App:
+        app = self.db.session.query(App).filter(App.id == id).first()
+        if not app:
+            raise FailException("应用不存在")
+        return app
+
+
 
 

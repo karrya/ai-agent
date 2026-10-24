@@ -39,6 +39,38 @@ class AppHandler:
         return success_json(f"应用已经创建成功，id为{app.id}")
 
 
+    def get_app(self):
+        id = request.args.get("id") or (request.get_json(silent=True) or {}).get("id")
+        app = self.app_service.get(id)
+        return success_json({
+            "id": app.id,
+            "account_id": app.account_id,
+            "name": app.name,
+            "icon": app.icon,
+            "description": app.description,
+            "updated_at": app.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
+            "created_at": app.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+        })
+
+    def get_app_id(self, id: str):
+        app = self.app_service.get(id)
+        return success_json({
+            "id": app.id,
+            "account_id": app.account_id,
+            "name": app.name,
+            "icon": app.icon,
+            "description": app.description,
+            "updated_at": app.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
+            "created_at": app.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+        })
+
+    def update_app(self, id: str):
+        app = self.app_service.get(id)
+        app.name = "哇哈哈"
+        self.app_service.db.session.commit()
+        return success_json(f"应用已经更新成功，id为{app.id}")
+
+
     def completion(self):
         # 1、获取请求体中的 query 字段
         req = CompletionReq()

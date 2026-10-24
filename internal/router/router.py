@@ -26,6 +26,9 @@ class Router:
         bp.add_url_rule("/ping", view_func=self.app_handler.ping, methods=["GET"])
         bp.add_url_rule("/app/completion", view_func=self.app_handler.completion, methods=["POST"])
         bp.add_url_rule("/app/create", view_func=self.app_handler.create_app, methods=["POST"])
+        bp.add_url_rule("/app/get", view_func=self.app_handler.get_app, methods=["GET"])
+        bp.add_url_rule("/app/get/<string:id>", view_func=self.app_handler.get_app_id, methods=["GET"])
+        bp.add_url_rule("/app/update/<string:id>", view_func=self.app_handler.update_app, methods=["POST"])
 
         # 3、注册蓝图
         flask.register_blueprint(bp)
