@@ -5,3 +5,7 @@
 @Author :   likai.com
 @File   :   __init__.py.py
 """
+
+from .database_extension import db
+
+__all__ = ["db"]

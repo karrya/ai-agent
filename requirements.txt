@@ -4,3 +4,5 @@ injector==0.24.0
 openai==3.35.1
 python-dotenv==1.2.4
 WTForms==3.2.2
+
+flask-sqlalchemy

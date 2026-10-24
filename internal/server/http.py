@@ -11,12 +11,13 @@ from config import Config
 from internal.exception import CustomException
 from pkg.http_code import HttpCode
 from pkg.response import Json, Response
+from flask_sqlalchemy import SQLAlchemy
 
 
 class Http(Flask):
 
     # 注册路由
-    def __init__(self, *args, config: Config, router: Router, **kwargs):
+    def __init__(self, *args, config: Config, router: Router, db: SQLAlchemy, **kwargs):
         super().__init__(*args, **kwargs)
         # 注册路由
         router.register_router(self)
@@ -26,6 +27,9 @@ class Http(Flask):
 
         # 加载配置
         self.config.from_object(config)
+
+        # 注册数据库
+        db.init_app(self)
 
     def _handle_custom_exception(self, e: Exception):
         # 自定义异常处理，如果是自定义异常，则提取message和code
