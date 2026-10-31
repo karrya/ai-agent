@@ -10,6 +10,9 @@ from dataclasses import dataclass
 import dotenv
 from flask import request
 from injector import inject
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
 from openai import OpenAI
 
 from internal.exception import FailException
@@ -64,6 +67,32 @@ class AppHandler:
         update_app = self.service.update_app(id)
         return success_json(f"应用已经更新成功，id为{update_app.name}")
 
+    # def completion(self):
+    #     # 1、获取请求体中的 query 字段
+    #     req = CompletionReq()
+    #
+    #     if not req.validate():
+    #         return validation_error_json(req.errors)
+    #
+    #     query = request.json.get("query")
+    #
+    #     # 2、调用 Anthropic API
+    #     # Kimi for Coding 端点（api.kimi.com/coding）只支持 Anthropic 协议
+    #     client = OpenAI()
+    #
+    #     # 3、调用 Anthropic API
+    #     response = client.chat.completions.create(
+    #         model="kimi-k3",
+    #         messages=[
+    #             {"role": "system", "content": "你是OpenAI的聊天机器人，请根据用户的输入回应信息"},
+    #             {"role": "user", "content": query},
+    #         ],
+    #     )
+    #
+    #     content = response.choices[0].message.content
+    #
+    #     return success_json(content)
+
     def completion(self):
         # 1、获取请求体中的 query 字段
         req = CompletionReq()
@@ -71,21 +100,14 @@ class AppHandler:
         if not req.validate():
             return validation_error_json(req.errors)
 
-        query = request.json.get("query")
-
-        # 2、调用 Anthropic API
-        # Kimi for Coding 端点（api.kimi.com/coding）只支持 Anthropic 协议
-        client = OpenAI()
-
-        # 3、调用 Anthropic API
-        response = client.chat.completions.create(
-            model="kimi-k3",
-            messages=[
-                {"role": "system", "content": "你是OpenAI的聊天机器人，请根据用户的输入回应信息"},
-                {"role": "user", "content": query},
-            ],
-        )
-
-        content = response.choices[0].message.content
+        # 构建大模型Prompt
+        prompt = ChatPromptTemplate.from_template("{query}")
+        # 构建大模型客户端
+        llm = ChatOpenAI(model="kimi-k3")
+        # 客户端调用提示词进行访问
+        ai_message = llm.invoke(prompt.invoke({"query": request.json.get("query")}))
+        # 获取访问结果，并解析
+        parser = StrOutputParser()
+        content = parser.invoke(ai_message)
 
         return success_json(content)

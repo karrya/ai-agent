@@ -11,3 +11,4 @@ pymysql
 flask-migrate
 langchain-core
 langchain-openai
+pydantic
