@@ -12,7 +12,7 @@ from flask_migrate import Migrate
 from internal.router import Router
 from config import Config
 from internal.exception import CustomException
-from model import App
+from internal.model import App
 from pkg.http_code import HttpCode
 from pkg.response import Json, Response
 from pkg.sqlalchemy import SQLAlchemy
@@ -35,9 +35,9 @@ class Http(Flask):
         # 注册数据库（必须先 init_app，再 create_all）
         db.init_app(self)
         migrate.init_app(self, db, directory="internal/migrations")
-        with self.app_context():
-            _ = App()
-            db.create_all()
+        # with self.app_context():
+        #     _ = App()
+        #     db.create_all()
 
     def _handle_custom_exception(self, e: Exception):
         # 自定义异常处理，如果是自定义异常，则提取message和code

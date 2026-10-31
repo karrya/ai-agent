@@ -15,7 +15,7 @@ from openai import OpenAI
 from internal.exception import FailException
 from internal.schema.app_schema import CompletionReq
 from pkg.response import success_json, validation_error_json
-from service import AppService
+from internal.service import AppService
 
 # 加载 .env 中的 OPENAI_API_KEY / OPENAI_BASE_URL，OpenAI SDK 会自动读取
 dotenv.load_dotenv()

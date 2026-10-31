@@ -13,8 +13,8 @@ from pkg.sqlalchemy import SQLAlchemy
 
 from injector import inject
 
-from exception import FailException
-from model import App
+from internal.exception import FailException
+from internal.model import App
 
 
 @inject
